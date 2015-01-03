@@ -17,6 +17,30 @@ var express = require('express');
 //  * `port` - The HTTP port to listen on. If `process.env.PORT` is set, _it overrides this value_.
 //
 var router = express();
+
+
+// Сообщаем клиенту, что кешировать для работы в offline
+router.all('/app.cache', function(req, res) {
+    res.writeHead(200, {'Content-Type': 'text/cache-manifest'});
+    var manifest = [
+      'CACHE MANIFEST',
+      '',
+      '# ' + new Date(), // После перезапуска сервера кеш будет обновляться
+      'CACHE:',
+      '/css/bootstrap.min.css',
+      '/css/bootstrap-responsive.min.css',
+      '/socket.io/socket.io.js',
+      '/js/jquery.min.js',
+      '/js/bootstrap.min.js',
+      '/js/angular.min.js',
+      '',
+      'NETWORK:',
+      '*'
+    ];
+    res.end(manifest.join('\r\n'));
+});
+
+
 var server = http.createServer(router);
 var io = socketio.listen(server);
 
